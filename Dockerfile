@@ -25,7 +25,9 @@ RUN apk add --no-cache ca-certificates
 RUN apk add --no-cache tzdata
 ENV TZ Asia/Shanghai
 
-COPY ./config/settings.yml /config/settings.yml
+COPY --from=builder /go/release/go-admin /
+COPY --from=builder /go/release/config/settings.yml /config/settings.yml
+COPY --from=builder /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 COPY ./go-admin-db.db /go-admin-db.db
 EXPOSE 8000
 CMD ["/go-admin","server","-c", "/config/settings.yml"]
