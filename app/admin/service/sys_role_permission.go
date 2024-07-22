@@ -3,7 +3,7 @@ package service
 import (
 	"errors"
 
-    "github.com/go-admin-team/go-admin-core/sdk/service"
+	"github.com/go-admin-team/go-admin-core/sdk/service"
 	"gorm.io/gorm"
 
 	"go-admin/app/admin/models"
@@ -57,11 +57,33 @@ func (e *SysRolePermission) Get(d *dto.SysRolePermissionGetReq, p *actions.DataP
 	return nil
 }
 
+// Get 获取SysRolePermission对象
+func (e *SysRolePermission) GetByRoleId(roleId int, p *actions.DataPermission, model *[]models.SysRolePermission) error {
+	data := models.SysRolePermission{
+		RoleId: roleId,
+	}
+	err := e.Orm.Model(&data).
+		Scopes(
+			actions.Permission(data.TableName(), p),
+		).
+		Find(model).Error
+	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
+		err = errors.New("查看对象不存在或无权查看")
+		e.Log.Errorf("Service GetSysRolePermission error:%s \r\n", err)
+		return err
+	}
+	if err != nil {
+		e.Log.Errorf("db error:%s", err)
+		return err
+	}
+	return nil
+}
+
 // Insert 创建SysRolePermission对象
 func (e *SysRolePermission) Insert(c *dto.SysRolePermissionInsertReq) error {
-    var err error
-    var data models.SysRolePermission
-    c.Generate(&data)
+	var err error
+	var data models.SysRolePermission
+	c.Generate(&data)
 	err = e.Orm.Create(&data).Error
 	if err != nil {
 		e.Log.Errorf("SysRolePermissionService Insert error:%s \r\n", err)
@@ -72,22 +94,22 @@ func (e *SysRolePermission) Insert(c *dto.SysRolePermissionInsertReq) error {
 
 // Update 修改SysRolePermission对象
 func (e *SysRolePermission) Update(c *dto.SysRolePermissionUpdateReq, p *actions.DataPermission) error {
-    var err error
-    var data = models.SysRolePermission{}
-    e.Orm.Scopes(
-            actions.Permission(data.TableName(), p),
-        ).First(&data, c.GetId())
-    c.Generate(&data)
+	var err error
+	var data = models.SysRolePermission{}
+	e.Orm.Scopes(
+		actions.Permission(data.TableName(), p),
+	).First(&data, c.GetId())
+	c.Generate(&data)
 
-    db := e.Orm.Save(&data)
-    if err = db.Error; err != nil {
-        e.Log.Errorf("SysRolePermissionService Save error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权更新该数据")
-    }
-    return nil
+	db := e.Orm.Save(&data)
+	if err = db.Error; err != nil {
+		e.Log.Errorf("SysRolePermissionService Save error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权更新该数据")
+	}
+	return nil
 }
 
 // Remove 删除SysRolePermission
@@ -99,11 +121,11 @@ func (e *SysRolePermission) Remove(d *dto.SysRolePermissionDeleteReq, p *actions
 			actions.Permission(data.TableName(), p),
 		).Delete(&data, d.GetId())
 	if err := db.Error; err != nil {
-        e.Log.Errorf("Service RemoveSysRolePermission error:%s \r\n", err)
-        return err
-    }
-    if db.RowsAffected == 0 {
-        return errors.New("无权删除该数据")
-    }
+		e.Log.Errorf("Service RemoveSysRolePermission error:%s \r\n", err)
+		return err
+	}
+	if db.RowsAffected == 0 {
+		return errors.New("无权删除该数据")
+	}
 	return nil
 }
