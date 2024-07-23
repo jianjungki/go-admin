@@ -199,11 +199,12 @@ func (e SysRolePermission) Delete(c *gin.Context) {
 // @Router /api/v1/sys-role-permission/check [post]
 // @Security Bearer
 func (e SysRolePermission) CheckPermission(c *gin.Context) {
+	req := dto.SysRolePermissionCheckReq{}
 	s := service.SysUser{}
 	r := service.SysRole{}
 	rp := service.SysRolePermission{}
 	err := e.MakeContext(c).
-		MakeOrm().
+		MakeOrm().Bind(&req).
 		MakeService(&r.Service).
 		MakeService(&s.Service).
 		MakeService(&rp.Service).
@@ -228,15 +229,18 @@ func (e SysRolePermission) CheckPermission(c *gin.Context) {
 		return
 	}
 
-	log.Printf("rpModel : %v", rpModel)
-	var mp = make(map[string]interface{})
-	permissionList := make([]map[string]interface{}, 0)
+	var passVal = false
 	for _, rpItem := range rpModel {
-		permissionItem := make(map[string]interface{})
-		permissionItem["method"] = rpItem.Method
-		permissionItem["path"] = rpItem.Path
-		permissionList = append(permissionList, permissionItem)
+		log.Printf("method: %v   path: %v", req.AuthMethod, req.AuthPath)
+		if req.AuthMethod == rpItem.Method &&
+			req.AuthPath == rpItem.Path {
+			passVal = true
+		}
 	}
-	mp["permission"] = permissionList
-	e.OK(mp, "")
+	if passVal {
+		e.OK(nil, "permission passed")
+	} else {
+		e.Error(400, nil, "permission denied")
+	}
+
 }

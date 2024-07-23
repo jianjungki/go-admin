@@ -89,3 +89,8 @@ type SysRolePermissionDeleteReq struct {
 func (s *SysRolePermissionDeleteReq) GetId() interface{} {
 	return s.Ids
 }
+
+type SysRolePermissionCheckReq struct {
+	AuthMethod string `json:"resource_method"`
+	AuthPath   string `json:"resource_path"`
+}
