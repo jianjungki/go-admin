@@ -5,8 +5,8 @@ import (
 	jwt "github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth"
 
 	"go-admin/app/admin/apis"
-	"go-admin/common/actions"
 	"go-admin/common/middleware"
+	"go-admin/common/actions"
 )
 
 func init() {
@@ -23,6 +23,5 @@ func registerSysRolePermissionRouter(v1 *gin.RouterGroup, authMiddleware *jwt.Gi
 		r.POST("", api.Insert)
 		r.PUT("/:id", actions.PermissionAction(), api.Update)
 		r.DELETE("", api.Delete)
-		r.POST("/check", api.CheckPermission)
 	}
 }

@@ -1,13 +1,12 @@
 package apis
 
 import (
-	"fmt"
+    "fmt"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-admin-team/go-admin-core/sdk/api"
 	"github.com/go-admin-team/go-admin-core/sdk/pkg/jwtauth/user"
 	_ "github.com/go-admin-team/go-admin-core/sdk/pkg/response"
-	"github.com/lunny/log"
 
 	"go-admin/app/admin/models"
 	"go-admin/app/admin/service"
@@ -29,18 +28,18 @@ type SysRolePermission struct {
 // @Router /api/v1/sys-role-permission [get]
 // @Security Bearer
 func (e SysRolePermission) GetPage(c *gin.Context) {
-	req := dto.SysRolePermissionGetPageReq{}
-	s := service.SysRolePermission{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		Bind(&req).
-		MakeService(&s.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		e.Error(500, err, err.Error())
-		return
-	}
+    req := dto.SysRolePermissionGetPageReq{}
+    s := service.SysRolePermission{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+   	if err != nil {
+   		e.Logger.Error(err)
+   		e.Error(500, err, err.Error())
+   		return
+   	}
 
 	p := actions.GetPermissionFromContext(c)
 	list := make([]models.SysRolePermission, 0)
@@ -49,7 +48,7 @@ func (e SysRolePermission) GetPage(c *gin.Context) {
 	err = s.GetPage(&req, p, &list, &count)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取角色接口权限失败，\r\n失败信息 %s", err.Error()))
-		return
+        return
 	}
 
 	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
@@ -66,7 +65,7 @@ func (e SysRolePermission) GetPage(c *gin.Context) {
 func (e SysRolePermission) Get(c *gin.Context) {
 	req := dto.SysRolePermissionGetReq{}
 	s := service.SysRolePermission{}
-	err := e.MakeContext(c).
+    err := e.MakeContext(c).
 		MakeOrm().
 		Bind(&req).
 		MakeService(&s.Service).
@@ -82,10 +81,10 @@ func (e SysRolePermission) Get(c *gin.Context) {
 	err = s.Get(&req, p, &object)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("获取角色接口权限失败，\r\n失败信息 %s", err.Error()))
-		return
+        return
 	}
 
-	e.OK(object, "查询成功")
+	e.OK( object, "查询成功")
 }
 
 // Insert 创建角色接口权限
@@ -99,25 +98,25 @@ func (e SysRolePermission) Get(c *gin.Context) {
 // @Router /api/v1/sys-role-permission [post]
 // @Security Bearer
 func (e SysRolePermission) Insert(c *gin.Context) {
-	req := dto.SysRolePermissionInsertReq{}
-	s := service.SysRolePermission{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		Bind(&req).
-		MakeService(&s.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		e.Error(500, err, err.Error())
-		return
-	}
+    req := dto.SysRolePermissionInsertReq{}
+    s := service.SysRolePermission{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
 	// 设置创建人
 	req.SetCreateBy(user.GetUserId(c))
 
 	err = s.Insert(&req)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("创建角色接口权限失败，\r\n失败信息 %s", err.Error()))
-		return
+        return
 	}
 
 	e.OK(req.GetId(), "创建成功")
@@ -135,27 +134,27 @@ func (e SysRolePermission) Insert(c *gin.Context) {
 // @Router /api/v1/sys-role-permission/{id} [put]
 // @Security Bearer
 func (e SysRolePermission) Update(c *gin.Context) {
-	req := dto.SysRolePermissionUpdateReq{}
-	s := service.SysRolePermission{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		Bind(&req).
-		MakeService(&s.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		e.Error(500, err, err.Error())
-		return
-	}
+    req := dto.SysRolePermissionUpdateReq{}
+    s := service.SysRolePermission{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
 	req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
 
 	err = s.Update(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("修改角色接口权限失败，\r\n失败信息 %s", err.Error()))
-		return
+        return
 	}
-	e.OK(req.GetId(), "修改成功")
+	e.OK( req.GetId(), "修改成功")
 }
 
 // Delete 删除角色接口权限
@@ -167,18 +166,18 @@ func (e SysRolePermission) Update(c *gin.Context) {
 // @Router /api/v1/sys-role-permission [delete]
 // @Security Bearer
 func (e SysRolePermission) Delete(c *gin.Context) {
-	s := service.SysRolePermission{}
-	req := dto.SysRolePermissionDeleteReq{}
-	err := e.MakeContext(c).
-		MakeOrm().
-		Bind(&req).
-		MakeService(&s.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		e.Error(500, err, err.Error())
-		return
-	}
+    s := service.SysRolePermission{}
+    req := dto.SysRolePermissionDeleteReq{}
+    err := e.MakeContext(c).
+        MakeOrm().
+        Bind(&req).
+        MakeService(&s.Service).
+        Errors
+    if err != nil {
+        e.Logger.Error(err)
+        e.Error(500, err, err.Error())
+        return
+    }
 
 	// req.SetUpdateBy(user.GetUserId(c))
 	p := actions.GetPermissionFromContext(c)
@@ -186,61 +185,7 @@ func (e SysRolePermission) Delete(c *gin.Context) {
 	err = s.Remove(&req, p)
 	if err != nil {
 		e.Error(500, err, fmt.Sprintf("删除角色接口权限失败，\r\n失败信息 %s", err.Error()))
-		return
+        return
 	}
-	e.OK(req.GetId(), "删除成功")
-}
-
-// CheckPermission
-// @Summary 获取个人信息
-// @Description 获取JSON
-// @Tags 个人中心
-// @Success 200 {object} response.Response "{"code": 200, "data": [...]}"
-// @Router /api/v1/sys-role-permission/check [post]
-// @Security Bearer
-func (e SysRolePermission) CheckPermission(c *gin.Context) {
-	req := dto.SysRolePermissionCheckReq{}
-	s := service.SysUser{}
-	r := service.SysRole{}
-	rp := service.SysRolePermission{}
-	err := e.MakeContext(c).
-		MakeOrm().Bind(&req).
-		MakeService(&r.Service).
-		MakeService(&s.Service).
-		MakeService(&rp.Service).
-		Errors
-	if err != nil {
-		e.Logger.Error(err)
-		e.Error(500, err, err.Error())
-		return
-	}
-	var roles = make([]string, 1)
-	roles[0] = user.GetRoleName(c)
-	var permissions = make([]string, 1)
-	permissions[0] = "*:*:*"
-	var buttons = make([]string, 1)
-	buttons[0] = "*:*:*"
-
-	p := actions.GetPermissionFromContext(c)
-
-	rpModel := []models.SysRolePermission{}
-	if err := rp.GetByRoleId(user.GetRoleId(c), p, &rpModel); err != nil {
-		log.Debugf("get permission by role error: %v", err.Error())
-		return
-	}
-
-	var passVal = false
-	for _, rpItem := range rpModel {
-		log.Printf("method: %v   path: %v", req.AuthMethod, req.AuthPath)
-		if req.AuthMethod == rpItem.Method &&
-			req.AuthPath == rpItem.Path {
-			passVal = true
-		}
-	}
-	if passVal {
-		e.OK(nil, "permission passed")
-	} else {
-		e.Error(400, nil, "permission denied")
-	}
-
+	e.OK( req.GetId(), "删除成功")
 }
