@@ -2,6 +2,8 @@ package handler
 
 import (
 	"go-admin/common/models"
+	"time"
+
 	"gorm.io/gorm"
 )
 
@@ -24,6 +26,8 @@ type SysUser struct {
 	PostIds  []int  `json:"postIds" gorm:"-"`
 	RoleIds  []int  `json:"roleIds" gorm:"-"`
 	//Dept     *SysDept `json:"dept"`
+	LastLoginAt time.Time `json:"lastLoginAt" gorm:"comment:最后登录时间"`
+	DueAt       time.Time `json:"dueAt" gorm:"comment:账号到期时间"`
 	models.ControlBy
 	models.ModelTime
 }
