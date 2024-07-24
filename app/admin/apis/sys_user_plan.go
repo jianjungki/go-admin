@@ -28,7 +28,7 @@ type SysUserPlan struct {
 // @Router /api/v1/sys-user-plan [get]
 // @Security Bearer
 func (e SysUserPlan) GetPage(c *gin.Context) {
-	req := map[string]string{}
+	req := dto.SysUserPlanGetPageReq{}
 	s := service.SysUserPlan{}
 	err := e.MakeContext(c).
 		MakeOrm().
@@ -41,6 +41,17 @@ func (e SysUserPlan) GetPage(c *gin.Context) {
 		return
 	}
 
+	list := make([]models.SysUserPlan, 0)
+	var count int64
+
+	p := actions.GetPermissionFromContext(c)
+	err = s.GetPage(&req, p, &list, &count)
+	if err != nil {
+		e.Error(500, err, "查询失败")
+		return
+	}
+
+	e.PageOK(list, int(count), req.GetPageIndex(), req.GetPageSize(), "查询成功")
 }
 
 // Get 获取SysUserPlan
@@ -72,6 +83,7 @@ func (e SysUserPlan) Get(c *gin.Context) {
 		e.Error(500, err, fmt.Sprintf("获取SysUserPlan失败，\r\n失败信息 %s", err.Error()))
 		return
 	}
+	e.Logger.Info(fmt.Sprintf("object err: %v", object))
 
 	e.OK(object, "查询成功")
 }
